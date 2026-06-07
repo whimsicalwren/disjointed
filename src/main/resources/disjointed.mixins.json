@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "dev.wren.disjointed.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "disjointed.refmap.json",
+  "mixins": [
+    "EntityVsBodyMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

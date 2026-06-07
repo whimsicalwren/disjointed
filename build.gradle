@@ -30,6 +30,12 @@ apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: "org.jetbrains.kotlin.jvm"
 
+mixin {
+    add sourceSets.main, "disjointed.refmap.json"
+    config "disjointed.mixins.json"
+}
+
+
 String gitRevision = 'git rev-parse HEAD'.execute().text.trim()
 if (gitRevision.length() >= 10) {
     version = mod_version + '+' + gitRevision.substring(0, 10)
