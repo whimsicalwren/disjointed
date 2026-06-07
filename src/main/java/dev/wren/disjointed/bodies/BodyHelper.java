@@ -30,7 +30,7 @@ public class BodyHelper {
             VsBodyCreateData bodyCreateData = new VsBodyCreateData(
                     VSGameUtilsKt.getDimensionId(level),
                     new BodyInertiaDataImpl(shapeData.getAabb().center(new Vector3d(posMid)), 1000, new Matrix3d()),
-                    new BodyKinematicsImpl(all(0), all(0), new BodyTransformImpl(posMid, unitQuaternion(), all(1), all(0))),
+                    new BodyKinematicsImpl(all(0), all(0), new BodyTransformImpl(posMid, new Quaterniond(), all(1), all(0))),
                     shapeData,
                     false,
                     VsBodyDefaults.DEFAULT_COLLISION_MASK,

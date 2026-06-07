@@ -43,13 +43,11 @@ public class EntityVsBodyMixin implements EntityVsBodyExtension {
     @Override
     public void setBody(@NotNull ServerVsBody body) {
         this.body = body;
-        System.out.println("set to " + body.getId());
         PhysTickHandler.LINKED_BODIES.add(this);
     }
 
     @Override
     public void removeBody() {
-        System.out.println("removing " + body.getId());
         this.body = null;
         PhysTickHandler.LINKED_BODIES.remove(this);
     }

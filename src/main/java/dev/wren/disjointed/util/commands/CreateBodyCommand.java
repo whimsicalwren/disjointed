@@ -10,6 +10,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import org.valkyrienskies.core.api.bodies.ServerVsBody;
 
+import static dev.wren.disjointed.Disjointed.LOGGER;
+
 public class CreateBodyCommand {
 
     public static ArgumentBuilder<CommandSourceStack, ?> create() {
@@ -28,7 +30,7 @@ public class CreateBodyCommand {
                                 ctx.getSource().sendSuccess(() -> message, false);
                                 return 1;
                             } catch (Exception e) {
-                                System.out.println(e.getMessage());
+                                LOGGER.error(e.getMessage());
                                 throw new RuntimeException(e);
                             }
                         }));

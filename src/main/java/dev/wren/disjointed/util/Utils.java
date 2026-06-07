@@ -1,17 +1,41 @@
 package dev.wren.disjointed.util;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.mojang.authlib.Agent;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.minecraft.MinecraftProfileTexture;
+import com.mojang.authlib.yggdrasil.response.ProfileSearchResultsResponse;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.DefaultPlayerSkin;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.apache.logging.log4j.util.TriConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaterniond;
 import org.joml.Quaterniondc;
 import org.joml.Vector3d;
 import org.joml.Vector3dc;
+import org.valkyrienskies.core.api.bodies.ServerVsBody;
 import org.valkyrienskies.core.api.bodies.properties.BodyPose;
+import org.valkyrienskies.core.internal.joints.VSJointMaxForceTorque;
+import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
-import java.util.Collection;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class Utils {
 
@@ -23,13 +47,24 @@ public class Utils {
         return new Vector3d(d, d, d);
     }
 
-    public static Quaterniond unitQuaternion() {
-        return new Quaterniond(0, 0, 0, 1);
-    }
-
     public static Vector3d getActualPosition(Entity entity) {
         Vector3d pos = fromVec3(entity.position());
         return new Vector3d(pos.x, pos.y + (entity.getBoundingBox().getYsize() / 2), pos.z);
+    }
+
+    public static float getMassforBody(ServerLevel level, Long id) {
+        ServerVsBody body = VSGameUtilsKt.getShipObjectWorld(level).getAllBodies().getById(id);
+
+        return body != null ? (float) body.getInertiaData().getMass() : 1000f;
+    }
+
+    public static VSJointMaxForceTorque getMaxForceTorque(ServerLevel level, Long id0, Long id1) {
+        float mass0 = getMassforBody(level, id0);
+        float mass1 = getMassforBody(level, id1);
+
+        float maxForce = 5e13f * Math.min(Math.max(mass0, mass1) / Math.min(mass0, mass1), 20.0f);
+
+        return new VSJointMaxForceTorque(maxForce, maxForce);
     }
 
     public static BodyPose createBodyPose(Vec3 position, AABB boundingBox) {
@@ -41,7 +76,7 @@ public class Utils {
 
             @Override
             public @NotNull Quaterniondc getRotation() {
-                return unitQuaternion();
+                return new Quaterniond();
             }
         };
     }
@@ -59,4 +94,79 @@ public class Utils {
         return pixels / 16f;
     }
 
+    public static void getSkin(String username, Consumer<ResourceLocation> callback) {
+        Thread skinThread = new Thread(() -> {
+            try {
+                // Step 1: username -> UUID
+                URL uuidUrl = new URL("https://api.mojang.com/users/profiles/minecraft/" + username);
+                HttpURLConnection uuidConn = (HttpURLConnection) uuidUrl.openConnection();
+                uuidConn.setRequestMethod("GET");
+
+                if (uuidConn.getResponseCode() != 200) {
+                    // Username doesn't exist
+                    return;
+                }
+
+                JsonObject uuidJson = JsonParser.parseString(
+                        new String(uuidConn.getInputStream().readAllBytes())
+                ).getAsJsonObject();
+
+                String uuidRaw = uuidJson.get("id").getAsString();
+                UUID uuid = UUID.fromString(
+                        uuidRaw.replaceFirst(
+                                "(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})",
+                                "$1-$2-$3-$4-$5"
+                        )
+                );
+
+                // Step 2: UUID -> fill profile properties (gets skin data)
+                GameProfile profile = new GameProfile(uuid, username);
+                GameProfile filled = Minecraft.getInstance()
+                        .getMinecraftSessionService()
+                        .fillProfileProperties(profile, true);
+
+                if (filled.getProperties().get("textures").isEmpty()) {
+                    // Profile has no skin data
+                    return;
+                }
+
+                // Step 3: register skin on main thread
+                Minecraft.getInstance().execute(() ->
+                        Minecraft.getInstance().getSkinManager().registerSkins(
+                                filled,
+                                (type, location, textures) -> {
+                                    if (type == MinecraftProfileTexture.Type.SKIN)
+                                        callback.accept(location);
+                                },
+                                true
+                        )
+                );
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        skinThread.setDaemon(true);
+        skinThread.start();
+    } // i hate this
+
+    public static <V> CompoundTag writeMap(Map<String, V> map, TriConsumer<CompoundTag, String, V> writeFunc) {
+        CompoundTag tag = new CompoundTag();
+
+        for (Map.Entry<String, V> value : map.entrySet()) {
+            writeFunc.accept(tag, value.getKey(), value.getValue());
+        }
+
+        return tag;
+    }
+
+    public static <V> HashMap<String, V> readMap(CompoundTag tag, List<String> keys, BiFunction<CompoundTag, String, V> readFunc) {
+        HashMap<String, V> hashMap = new HashMap<>();
+
+        for (String key : keys) {
+            hashMap.put(key, readFunc.apply(tag, key));
+        }
+
+        return hashMap;
+    }
 }
