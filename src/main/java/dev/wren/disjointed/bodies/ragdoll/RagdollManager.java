@@ -3,7 +3,6 @@ package dev.wren.disjointed.bodies.ragdoll;
 import dev.wren.disjointed.Disjointed;
 import dev.wren.disjointed.DisjointedNetwork;
 import dev.wren.disjointed.bodies.ragdoll.group.RagdollGroup;
-import dev.wren.disjointed.bodies.ragdoll.group.RagdollGroupRegistry;
 import dev.wren.disjointed.bodies.ragdoll.packet.AddRagdollPacket;
 import dev.wren.disjointed.bodies.ragdoll.packet.ClearAllRagdollsPacket;
 import net.minecraft.nbt.CompoundTag;
@@ -36,12 +35,12 @@ public class RagdollManager extends SavedData {
         for (Tag t : list) {
             CompoundTag ragdollTag = (CompoundTag) t;
 
-            RagdollGroup group = RagdollGroupRegistry.deserialize(ragdollTag);
+            RagdollGroup group = RagdollRegistry.deserialize(ragdollTag);
 
             data.RAGDOLLS.put(group.getUUID(), group);
         }
 
-        Disjointed.LOGGER.info("Loaded {} ropes from saved data.", data.RAGDOLLS.size());
+        Disjointed.LOGGER.info("Loaded {} ragdolls from saved data.", data.RAGDOLLS.size());
         return data;
     }
 

@@ -1,11 +1,14 @@
-package dev.wren.disjointed.bodies.ragdoll.client;
+package dev.wren.disjointed.bodies.ragdoll.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.wren.disjointed.bodies.ragdoll.RagdollSlots;
+import dev.wren.disjointed.bodies.ragdoll.client.ClientRagdoll;
+import dev.wren.disjointed.bodies.ragdoll.client.ClientRagdollRenderer;
 import dev.wren.disjointed.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.PlayerModel;
+import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -18,6 +21,7 @@ import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
+import org.joml.Vector3d;
 import org.joml.Vector3dc;
 import org.valkyrienskies.core.api.bodies.ClientVsBody;
 import org.valkyrienskies.core.api.bodies.properties.BodyTransform;
@@ -25,6 +29,9 @@ import org.valkyrienskies.core.api.bodies.properties.BodyTransform;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+
+import static dev.wren.disjointed.util.Utils.all;
+import static dev.wren.disjointed.util.Utils.pxToBlocks;
 
 public class PlayerRagdollRenderer implements ClientRagdollRenderer {
 
@@ -48,6 +55,8 @@ public class PlayerRagdollRenderer implements ClientRagdollRenderer {
 
             poseStack.translate(pos.x() - camPos.x, pos.y() - camPos.y, pos.z() - camPos.z);
             poseStack.mulPose(rt.getRotation().get(new Quaternionf()));
+            Vector3d offset = getOffsetVector(slot);
+            poseStack.translate(offset.x, offset.y, offset.z);
             poseStack.scale(-1f, -1f, 1f);
 
             VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityTranslucent(skin));
@@ -68,9 +77,13 @@ public class PlayerRagdollRenderer implements ClientRagdollRenderer {
 
     private PlayerModel<AbstractClientPlayer> getOrBakeModel(UUID uuid) {
         return models.computeIfAbsent(uuid, id -> {
-            ModelPart root = Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER);
+            ModelPart root = Minecraft.getInstance().getEntityModels().bakeLayer(getModelLayer());
             return new PlayerModel<>(root, false);
         });
+    }
+
+    public ModelLayerLocation getModelLayer() {
+        return ModelLayers.PLAYER;
     }
 
     private ResourceLocation getOrLoadSkin(ClientRagdoll ragdoll) {
@@ -92,7 +105,7 @@ public class PlayerRagdollRenderer implements ClientRagdollRenderer {
         skins.remove(uuid);
     }
 
-    private ModelPart getModelPartForSlot(String slot, PlayerModel<AbstractClientPlayer> modelRoot) {
+    private static ModelPart getModelPartForSlot(String slot, PlayerModel<AbstractClientPlayer> modelRoot) {
         return switch (slot) {
             case RagdollSlots.Player.HEAD -> modelRoot.head;
             case RagdollSlots.Player.TORSO -> modelRoot.body;
@@ -104,7 +117,7 @@ public class PlayerRagdollRenderer implements ClientRagdollRenderer {
         };
     }
 
-    private ModelPart getModelLayerPartForSlot(String slot, PlayerModel<AbstractClientPlayer> modelRoot) {
+    private static ModelPart getModelLayerPartForSlot(String slot, PlayerModel<AbstractClientPlayer> modelRoot) {
         return switch (slot) {
             case RagdollSlots.Player.HEAD -> modelRoot.hat;
             case RagdollSlots.Player.TORSO -> modelRoot.jacket;
@@ -113,6 +126,18 @@ public class PlayerRagdollRenderer implements ClientRagdollRenderer {
             case RagdollSlots.Player.LEFT_LEG -> modelRoot.leftPants;
             case RagdollSlots.Player.RIGHT_LEG -> modelRoot.rightPants;
             default -> null;
+        };
+    }
+
+    private static Vector3d getOffsetVector(String slot) {
+        return switch (slot) {
+            case RagdollSlots.Player.HEAD      -> new Vector3d(0, pxToBlocks(-4), 0);
+            case RagdollSlots.Player.TORSO     -> new Vector3d(0, 0.375f, 0);
+            case RagdollSlots.Player.LEFT_ARM -> new Vector3d(pxToBlocks(6), 0.375f, 0);
+            case RagdollSlots.Player.RIGHT_ARM -> new Vector3d(pxToBlocks(-6), 0.375f, 0);
+            case RagdollSlots.Player.LEFT_LEG -> new Vector3d(pxToBlocks(2), pxToBlocks(18), 0);
+            case RagdollSlots.Player.RIGHT_LEG -> new Vector3d(pxToBlocks(-2), pxToBlocks(18), 0);
+            default -> all(0);
         };
     }
 }

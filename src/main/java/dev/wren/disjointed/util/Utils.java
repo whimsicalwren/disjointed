@@ -97,13 +97,11 @@ public class Utils {
     public static void getSkin(String username, Consumer<ResourceLocation> callback) {
         Thread skinThread = new Thread(() -> {
             try {
-                // Step 1: username -> UUID
                 URL uuidUrl = new URL("https://api.mojang.com/users/profiles/minecraft/" + username);
                 HttpURLConnection uuidConn = (HttpURLConnection) uuidUrl.openConnection();
                 uuidConn.setRequestMethod("GET");
 
                 if (uuidConn.getResponseCode() != 200) {
-                    // Username doesn't exist
                     return;
                 }
 
@@ -119,18 +117,15 @@ public class Utils {
                         )
                 );
 
-                // Step 2: UUID -> fill profile properties (gets skin data)
                 GameProfile profile = new GameProfile(uuid, username);
                 GameProfile filled = Minecraft.getInstance()
                         .getMinecraftSessionService()
                         .fillProfileProperties(profile, true);
 
                 if (filled.getProperties().get("textures").isEmpty()) {
-                    // Profile has no skin data
                     return;
                 }
 
-                // Step 3: register skin on main thread
                 Minecraft.getInstance().execute(() ->
                         Minecraft.getInstance().getSkinManager().registerSkins(
                                 filled,

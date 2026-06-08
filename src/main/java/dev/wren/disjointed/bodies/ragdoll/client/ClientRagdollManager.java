@@ -2,17 +2,15 @@ package dev.wren.disjointed.bodies.ragdoll.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.wren.disjointed.Disjointed;
+import dev.wren.disjointed.bodies.ragdoll.RagdollRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +33,7 @@ public class ClientRagdollManager {
     }
 
     @Mod.EventBusSubscriber(modid = Disjointed.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
+    @SuppressWarnings("unused")
     public static class Renderer {
 
         @SubscribeEvent
@@ -48,7 +47,7 @@ public class ClientRagdollManager {
             Vec3 camPos = event.getCamera().getPosition();
 
             for (ClientRagdoll ragdoll : CLIENT_RAGDOLLS.values()) {
-                ClientRagdollGroupRegistry.get(ragdoll.typeId()).render(ragdoll, level, poseStack, bufferSource, camPos);
+                RagdollRegistry.getRenderer(ragdoll.typeId()).render(ragdoll, level, poseStack, bufferSource, camPos);
             }
 
             bufferSource.endBatch();
