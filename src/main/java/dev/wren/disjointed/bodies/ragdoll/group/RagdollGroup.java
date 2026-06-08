@@ -21,6 +21,7 @@ public interface RagdollGroup  {
     Long getSlot(String slot);
 
     void remove(ServerLevel level);
+    void createJoints(ServerLevel level);
 
 
     default ServerVsBody addSlot(String slot, ServerVsBody body) {

@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -31,13 +32,14 @@ public class PlayerRagdollRenderer implements ClientRagdollRenderer {
     private final Map<UUID, ResourceLocation> skins = new HashMap<>();
 
     @Override
-    public void render(ClientRagdoll ragdoll, PoseStack poseStack, MultiBufferSource.BufferSource bufferSource, Vec3 camPos) {
+    public void render(ClientRagdoll ragdoll, ClientLevel level, PoseStack poseStack, MultiBufferSource.BufferSource bufferSource, Vec3 camPos) {
         PlayerModel<AbstractClientPlayer> model = getOrBakeModel(ragdoll.uuid());
         ResourceLocation skin = getOrLoadSkin(ragdoll);
 
-        for (Map.Entry<String, ClientVsBody> entry : ragdoll.slots().entrySet()) {
+        for (Map.Entry<String, Long> entry : ragdoll.slots().entrySet()) {
             String slot = entry.getKey();
-            ClientVsBody body = entry.getValue();
+            ClientVsBody body = getBody(level, entry.getValue());
+            if (body == null) continue;
 
             BodyTransform rt = body.getRenderTransform();
             Vector3dc pos = rt.getPosition();
@@ -51,12 +53,14 @@ public class PlayerRagdollRenderer implements ClientRagdollRenderer {
             VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityTranslucent(skin));
 
             ModelPart part = getModelPartForSlot(slot, model);
-            if (part != null)
+            if (part != null) {
                 part.render(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+            }
 
             ModelPart layerPart = getModelLayerPartForSlot(slot, model);
-            if (layerPart != null)
+            if (layerPart != null) {
                 layerPart.render(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+            }
 
             poseStack.popPose();
         }

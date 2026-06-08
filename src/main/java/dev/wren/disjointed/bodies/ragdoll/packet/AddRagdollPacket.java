@@ -57,17 +57,8 @@ public class AddRagdollPacket {
     }
 
     public static void handle(AddRagdollPacket packet, Supplier<NetworkEvent.Context> ctx) {
-        System.out.println("handle 1");
         ctx.get().enqueueWork(() -> {
-            System.out.println("handle 2");
-            QueryableVsBodyData<VsBody> bodyData = VSGameUtilsKt.getAllBodies(Minecraft.getInstance().level);
-            Map<String, ClientVsBody> resolvedSlots = new HashMap<>();
-            for (Map.Entry<String, Long> entry : packet.slots.entrySet()) {
-                ClientVsBody body = (ClientVsBody) bodyData.getById(entry.getValue());
-                if (body != null) resolvedSlots.put(entry.getKey(), body);
-            }
-            ClientRagdoll ragdoll = new ClientRagdoll(packet.uuid, packet.typeId, resolvedSlots, packet.extraData);
-
+            ClientRagdoll ragdoll = new ClientRagdoll(packet.uuid, packet.typeId, packet.slots, packet.extraData);
             ClientRagdollManager.register(ragdoll);
         });
         ctx.get().setPacketHandled(true);

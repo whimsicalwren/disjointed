@@ -6,5 +6,5 @@ import org.valkyrienskies.core.api.bodies.ClientVsBody;
 import java.util.Map;
 import java.util.UUID;
 
-public record ClientRagdoll(UUID uuid, String typeId, Map<String, ClientVsBody> slots, CompoundTag extraData) {
+public record ClientRagdoll(UUID uuid, String typeId, Map<String, Long> slots, CompoundTag extraData) {
 }

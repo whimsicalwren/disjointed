@@ -1,5 +1,6 @@
 package dev.wren.disjointed;
 
+import dev.wren.disjointed.bodies.ragdoll.RagdollDeserializers;
 import dev.wren.disjointed.bodies.ragdoll.RagdollManager;
 import dev.wren.disjointed.bodies.ragdoll.client.RagdollRenderers;
 import dev.wren.disjointed.util.commands.DisjointedCommands;
@@ -29,9 +30,9 @@ public class Disjointed {
     public Disjointed(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
 
+        RagdollDeserializers.register();
         DisjointedNetwork.register();
-
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> RagdollRenderers::register);
+        RagdollRenderers.register();
 
         MinecraftForge.EVENT_BUS.addListener(DisjointedCommands::register);
         MinecraftForge.EVENT_BUS.addListener(Disjointed::onPlayerJoin);

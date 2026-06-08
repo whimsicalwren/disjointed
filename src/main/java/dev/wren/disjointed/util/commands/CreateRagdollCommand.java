@@ -23,7 +23,7 @@ public class CreateRagdollCommand {
 
                             Vector3d posVec = new Vector3d(pos.getX(), pos.getY(), pos.getZ());
 
-                            PlayerRagdollGroup ragdoll = PlayerRagdollHelper.createPlayerRagdoll(ctx.getSource().getPlayerOrException(), posVec, username);
+                            PlayerRagdollGroup ragdoll = PlayerRagdollHelper.createRagdollClassic(ctx.getSource().getLevel(), posVec, username);
 
                             Component message = Component.literal("Created ragdoll " + ragdoll.getUUID());
 

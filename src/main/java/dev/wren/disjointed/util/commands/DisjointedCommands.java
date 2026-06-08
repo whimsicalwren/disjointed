@@ -13,6 +13,7 @@ public class DisjointedCommands {
                 .then(GetBodyCommand.get())
                 .then(RemoveBodyCommand.remove())
                 .then(CreateRagdollCommand.createClassic())
+                .then(FixRagdollJointsCommand.fixJoints())
                 ;
 
         event.getDispatcher().register(root);

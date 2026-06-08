@@ -35,7 +35,6 @@ public class DisjointedNetwork {
     }
 
     public static void sendToAll(Object packet) {
-        System.out.println("send to all");
         CHANNEL.send(PacketDistributor.ALL.noArg(), packet);
     }
 
