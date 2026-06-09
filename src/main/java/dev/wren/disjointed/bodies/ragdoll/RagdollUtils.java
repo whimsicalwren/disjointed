@@ -21,13 +21,13 @@ import static dev.wren.disjointed.util.Utils.all;
 
 public class RagdollUtils {
 
-    public static VsBodyCreateData createRagdollPieceData(ServerLevel level, BodyShapeData shapeData, Vector3d pos, double mass) {
+    public static VsBodyCreateData createRagdollPieceData(ServerLevel level, BodyShapeData shapeData, Vector3d pos, double mass, boolean isStatic) {
         return new VsBodyCreateData(
                 VSGameUtilsKt.getDimensionId(level),
                 new BodyInertiaDataImpl(shapeData.getAabb().center(new Vector3d()), mass, new Matrix3d()),
                 new BodyKinematicsImpl(all(0), all(0), new BodyTransformImpl(pos, new Quaterniond(), all(1), all(0))),
                 shapeData,
-                false,
+                isStatic,
                 VsBodyDefaults.DEFAULT_COLLISION_MASK,
                 VsBodyDefaults.DEFAULT_STATIC_FRICTION_COEFFICIENT,
                 VsBodyDefaults.DEFAULT_DYNAMIC_FRICTION_COEFFICIENT,

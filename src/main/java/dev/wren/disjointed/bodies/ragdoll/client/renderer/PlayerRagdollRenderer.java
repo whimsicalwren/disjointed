@@ -1,30 +1,18 @@
 package dev.wren.disjointed.bodies.ragdoll.client.renderer;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.wren.disjointed.bodies.ragdoll.RagdollSlots;
+import dev.wren.disjointed.bodies.ragdoll.client.BaseRagdollRenderer;
 import dev.wren.disjointed.bodies.ragdoll.client.ClientRagdoll;
-import dev.wren.disjointed.bodies.ragdoll.client.ClientRagdollRenderer;
 import dev.wren.disjointed.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.phys.Vec3;
-import org.joml.Quaternionf;
 import org.joml.Vector3d;
-import org.joml.Vector3dc;
-import org.valkyrienskies.core.api.bodies.ClientVsBody;
-import org.valkyrienskies.core.api.bodies.properties.BodyTransform;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,79 +21,36 @@ import java.util.UUID;
 import static dev.wren.disjointed.util.Utils.all;
 import static dev.wren.disjointed.util.Utils.pxToBlocks;
 
-public class PlayerRagdollRenderer implements ClientRagdollRenderer {
+public class PlayerRagdollRenderer extends BaseRagdollRenderer<PlayerModel<AbstractClientPlayer>> {
 
-    private final Map<UUID, PlayerModel<AbstractClientPlayer>> models = new HashMap<>();
-    private final Map<UUID, ResourceLocation> skins = new HashMap<>();
+    protected final Map<UUID, PlayerModel<AbstractClientPlayer>> models = new HashMap<>();
+    protected final Map<UUID, ResourceLocation> textures = new HashMap<>();
 
     @Override
-    public void render(ClientRagdoll ragdoll, ClientLevel level, PoseStack poseStack, MultiBufferSource.BufferSource bufferSource, Vec3 camPos) {
-        PlayerModel<AbstractClientPlayer> model = getOrBakeModel(ragdoll.uuid());
-        ResourceLocation skin = getOrLoadSkin(ragdoll);
-
-        for (Map.Entry<String, Long> entry : ragdoll.slots().entrySet()) {
-            String slot = entry.getKey();
-            ClientVsBody body = getBody(level, entry.getValue());
-            if (body == null) continue;
-
-            BodyTransform rt = body.getRenderTransform();
-            Vector3dc pos = rt.getPosition();
-
-            poseStack.pushPose();
-
-            poseStack.translate(pos.x() - camPos.x, pos.y() - camPos.y, pos.z() - camPos.z);
-            poseStack.mulPose(rt.getRotation().get(new Quaternionf()));
-            Vector3d offset = getOffsetVector(slot);
-            poseStack.translate(offset.x, offset.y, offset.z);
-            poseStack.scale(-1f, -1f, 1f);
-
-            VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityTranslucent(skin));
-
-            ModelPart part = getModelPartForSlot(slot, model);
-            if (part != null) {
-                part.render(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
-            }
-
-            ModelPart layerPart = getModelLayerPartForSlot(slot, model);
-            if (layerPart != null) {
-                layerPart.render(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
-            }
-
-            poseStack.popPose();
-        }
-    }
-
-    private PlayerModel<AbstractClientPlayer> getOrBakeModel(UUID uuid) {
+    protected PlayerModel<AbstractClientPlayer> getOrBakeModel(UUID uuid) {
         return models.computeIfAbsent(uuid, id -> {
-            ModelPart root = Minecraft.getInstance().getEntityModels().bakeLayer(getModelLayer());
+            ModelPart root = Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER);
             return new PlayerModel<>(root, false);
         });
     }
 
-    public ModelLayerLocation getModelLayer() {
-        return ModelLayers.PLAYER;
-    }
+    @Override
+    protected ResourceLocation getOrLoadTexture(ClientRagdoll ragdoll) {
+        if (textures.containsKey(ragdoll.uuid()))
+            return textures.get(ragdoll.uuid());
 
-    private ResourceLocation getOrLoadSkin(ClientRagdoll ragdoll) {
-        if (skins.containsKey(ragdoll.uuid()))
-            return skins.get(ragdoll.uuid());
-
-        skins.put(ragdoll.uuid(), DefaultPlayerSkin.getDefaultSkin());
+        textures.put(ragdoll.uuid(), DefaultPlayerSkin.getDefaultSkin());
 
         String username = ragdoll.extraData().getString("username");
-        if (username != null) {
-            Utils.getSkin(username, skin -> skins.put(ragdoll.uuid(), skin));
+        if (!username.isEmpty()) {
+            Utils.getSkin(username, skin -> textures.put(ragdoll.uuid(), skin));
         }
 
-        return skins.get(ragdoll.uuid());
+        return textures.get(ragdoll.uuid());
     }
 
-    public void invalidate(UUID uuid) {
-        models.remove(uuid);
-        skins.remove(uuid);
-    }
-
-    private static ModelPart getModelPartForSlot(String slot, PlayerModel<AbstractClientPlayer> modelRoot) {
+    @Override
+    protected ModelPart getModelPartForSlot(String slot, PlayerModel<AbstractClientPlayer> modelRoot) {
         return switch (slot) {
             case RagdollSlots.Player.HEAD -> modelRoot.head;
             case RagdollSlots.Player.TORSO -> modelRoot.body;
@@ -117,7 +62,8 @@ public class PlayerRagdollRenderer implements ClientRagdollRenderer {
         };
     }
 
-    private static ModelPart getModelLayerPartForSlot(String slot, PlayerModel<AbstractClientPlayer> modelRoot) {
+    @Override
+    protected ModelPart getModelLayerPartForSlot(String slot, PlayerModel<AbstractClientPlayer> modelRoot) {
         return switch (slot) {
             case RagdollSlots.Player.HEAD -> modelRoot.hat;
             case RagdollSlots.Player.TORSO -> modelRoot.jacket;
@@ -129,7 +75,8 @@ public class PlayerRagdollRenderer implements ClientRagdollRenderer {
         };
     }
 
-    private static Vector3d getOffsetVector(String slot) {
+    @Override
+    protected Vector3d getOffsetVector(String slot) {
         return switch (slot) {
             case RagdollSlots.Player.HEAD      -> new Vector3d(0, pxToBlocks(-4), 0);
             case RagdollSlots.Player.TORSO     -> new Vector3d(0, 0.375f, 0);

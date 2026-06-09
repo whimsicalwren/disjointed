@@ -2,7 +2,7 @@ package dev.wren.disjointed.util.commands;
 
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import dev.wren.disjointed.bodies.ragdoll.RagdollManager;
-import dev.wren.disjointed.bodies.ragdoll.group.RagdollGroup;
+import dev.wren.disjointed.bodies.ragdoll.group.Ragdoll;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 
@@ -13,7 +13,7 @@ public class FixRagdollJointsCommand {
                 .executes(ctx -> {
                     RagdollManager manager = RagdollManager.get(ctx.getSource().getLevel());
 
-                    for (RagdollGroup group : manager.RAGDOLLS.values()) {
+                    for (Ragdoll group : manager.RAGDOLLS.values()) {
                         group.createJoints(ctx.getSource().getLevel());
                     }
 

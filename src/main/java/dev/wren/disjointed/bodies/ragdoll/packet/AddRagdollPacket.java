@@ -20,13 +20,13 @@ import java.util.function.Supplier;
 public class AddRagdollPacket {
     private final UUID uuid;
     private final String typeId;
-    private final Map<String, Long> slots; // slot name -> VS body ID
+    private final Map<String, Long> pieces;
     private final CompoundTag extraData;
 
-    public AddRagdollPacket(UUID uuid, String typeId, Map<String, Long> slots, CompoundTag extraData) {
+    public AddRagdollPacket(UUID uuid, String typeId, Map<String, Long> pieces, CompoundTag extraData) {
         this.uuid = uuid;
         this.typeId = typeId;
-        this.slots = slots;
+        this.pieces = pieces;
         this.extraData = extraData;
     }
 
@@ -35,8 +35,8 @@ public class AddRagdollPacket {
         buf.writeUtf(packet.typeId);
         buf.writeNbt(packet.extraData);
 
-        buf.writeInt(packet.slots.size());
-        for (Map.Entry<String, Long> entry : packet.slots.entrySet()) {
+        buf.writeInt(packet.pieces.size());
+        for (Map.Entry<String, Long> entry : packet.pieces.entrySet()) {
             buf.writeUtf(entry.getKey());
             buf.writeLong(entry.getValue());
         }
@@ -48,17 +48,17 @@ public class AddRagdollPacket {
         CompoundTag extraData = buf.readNbt();
 
         int size = buf.readInt();
-        Map<String, Long> slots = new HashMap<>();
+        Map<String, Long> pieces = new HashMap<>();
         for (int i = 0; i < size; i++) {
-            slots.put(buf.readUtf(), buf.readLong());
+            pieces.put(buf.readUtf(), buf.readLong());
         }
 
-        return new AddRagdollPacket(uuid, typeId, slots, extraData);
+        return new AddRagdollPacket(uuid, typeId, pieces, extraData);
     }
 
     public static void handle(AddRagdollPacket packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            ClientRagdoll ragdoll = new ClientRagdoll(packet.uuid, packet.typeId, packet.slots, packet.extraData);
+            ClientRagdoll ragdoll = new ClientRagdoll(packet.uuid, packet.typeId, packet.pieces, packet.extraData);
             ClientRagdollManager.register(ragdoll);
         });
         ctx.get().setPacketHandled(true);

@@ -68,10 +68,14 @@ public class Utils {
     }
 
     public static BodyPose createBodyPose(Vec3 position, AABB boundingBox) {
+        return createBodyPose(new Vector3d(position.x, position.y + (boundingBox.getYsize() / 2), position.z));
+    }
+
+    public static BodyPose createBodyPose(Vector3d position) {
         return new BodyPose() {
             @Override
             public @NotNull Vector3dc getPosition() {
-                return new Vector3d(position.x, position.y + (boundingBox.getYsize() / 2), position.z);
+                return new Vector3d(position);
             }
 
             @Override

@@ -12,7 +12,7 @@ public class DisjointedCommands {
                 .then(CreateBodyCommand.create())
                 .then(GetBodyCommand.get())
                 .then(RemoveBodyCommand.remove())
-                .then(CreateRagdollCommand.createClassic())
+                .then(CreateRagdollCommand.create())
                 .then(FixRagdollJointsCommand.fixJoints())
                 ;
 

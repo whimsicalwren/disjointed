@@ -2,7 +2,7 @@ package dev.wren.disjointed.bodies.ragdoll;
 
 import dev.wren.disjointed.Disjointed;
 import dev.wren.disjointed.DisjointedNetwork;
-import dev.wren.disjointed.bodies.ragdoll.group.RagdollGroup;
+import dev.wren.disjointed.bodies.ragdoll.group.Ragdoll;
 import dev.wren.disjointed.bodies.ragdoll.packet.AddRagdollPacket;
 import dev.wren.disjointed.bodies.ragdoll.packet.ClearAllRagdollsPacket;
 import net.minecraft.nbt.CompoundTag;
@@ -21,7 +21,7 @@ import java.util.UUID;
 public class RagdollManager extends SavedData {
     private static final String NAME = "disjointed_ragdolls";
 
-    public final Map<UUID, RagdollGroup> RAGDOLLS = new HashMap<>();
+    public final Map<UUID, Ragdoll> RAGDOLLS = new HashMap<>();
 
     public static RagdollManager get(ServerLevel level) {
         DimensionDataStorage storage = level.getDataStorage();
@@ -35,7 +35,7 @@ public class RagdollManager extends SavedData {
         for (Tag t : list) {
             CompoundTag ragdollTag = (CompoundTag) t;
 
-            RagdollGroup group = RagdollRegistry.deserialize(ragdollTag);
+            Ragdoll group = RagdollRegistry.deserialize(ragdollTag);
 
             data.RAGDOLLS.put(group.getUUID(), group);
         }
@@ -47,7 +47,7 @@ public class RagdollManager extends SavedData {
     @Override
     public @NotNull CompoundTag save(@NotNull CompoundTag tag) {
         ListTag list = new ListTag();
-        for (Map.Entry<UUID, RagdollGroup> entry : RAGDOLLS.entrySet()) {
+        for (Map.Entry<UUID, Ragdoll> entry : RAGDOLLS.entrySet()) {
             list.add(entry.getValue().serialize());
         }
         tag.put("ragdolls", list);
@@ -55,7 +55,7 @@ public class RagdollManager extends SavedData {
         return tag;
     }
 
-    public void addRagdoll(RagdollGroup ragdoll) {
+    public void addRagdoll(Ragdoll ragdoll) {
         RAGDOLLS.put(ragdoll.getUUID(), ragdoll);
 
         DisjointedNetwork.sendToAll(new AddRagdollPacket(ragdoll.getUUID(), ragdoll.getTypeId(), ragdoll.getPieces(), ragdoll.getAdditionalData()));
@@ -66,11 +66,11 @@ public class RagdollManager extends SavedData {
     public static void syncAllRagdollsToPlayer(ServerPlayer player) {
         RagdollManager manager = RagdollManager.get(player.serverLevel());
 
-        Disjointed.LOGGER.info("Syncing all ropes to player {} ({})", player.getName().getString(), player.getUUID());
+        Disjointed.LOGGER.info("Syncing all ragdolls to player {} ({})", player.getName().getString(), player.getUUID());
 
         DisjointedNetwork.sendToPlayer(player, new ClearAllRagdollsPacket());
 
-        for (RagdollGroup ragdoll : manager.RAGDOLLS.values()) {
+        for (Ragdoll ragdoll : manager.RAGDOLLS.values()) {
             DisjointedNetwork.sendToPlayer(player, new AddRagdollPacket(ragdoll.getUUID(), ragdoll.getTypeId(), ragdoll.getPieces(), ragdoll.getAdditionalData()));
         }
 

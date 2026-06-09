@@ -4,6 +4,7 @@ import dev.wren.disjointed.util.Utils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import org.valkyrienskies.core.api.bodies.ServerVsBody;
+import org.valkyrienskies.core.api.world.PhysLevel;
 
 import java.util.List;
 import java.util.Map;
@@ -11,7 +12,7 @@ import java.util.UUID;
 
 import static dev.wren.disjointed.Disjointed.LOGGER;
 
-public interface RagdollGroup  {
+public interface Ragdoll {
 
     Map<String, Long> getPieces();
     List<String> getSlots();
@@ -22,6 +23,7 @@ public interface RagdollGroup  {
 
     void remove(ServerLevel level);
     void createJoints(ServerLevel level);
+    void changeCollision(PhysLevel level);
 
 
     default ServerVsBody addSlot(String slot, ServerVsBody body) {

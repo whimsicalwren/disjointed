@@ -32,26 +32,21 @@ public class ClientRagdollManager {
         CLIENT_RAGDOLLS.clear();
     }
 
-    @Mod.EventBusSubscriber(modid = Disjointed.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
-    @SuppressWarnings("unused")
-    public static class Renderer {
+    public static void onRenderLevel(RenderLevelStageEvent event) {
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_ENTITIES) return;
+        if (CLIENT_RAGDOLLS.isEmpty()) return;
 
-        @SubscribeEvent
-        public static void onRenderLevel(RenderLevelStageEvent event) {
-            if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_ENTITIES) return;
-            if (CLIENT_RAGDOLLS.isEmpty()) return;
+        PoseStack poseStack = event.getPoseStack();
+        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+        ClientLevel level = Minecraft.getInstance().level;
+        Vec3 camPos = event.getCamera().getPosition();
 
-            PoseStack poseStack = event.getPoseStack();
-            MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-            ClientLevel level = Minecraft.getInstance().level;
-            Vec3 camPos = event.getCamera().getPosition();
-
-            for (ClientRagdoll ragdoll : CLIENT_RAGDOLLS.values()) {
-                RagdollRegistry.getRenderer(ragdoll.typeId()).render(ragdoll, level, poseStack, bufferSource, camPos);
-            }
-
-            bufferSource.endBatch();
+        for (ClientRagdoll ragdoll : CLIENT_RAGDOLLS.values()) {
+            RagdollRegistry.getRenderer(ragdoll.typeId()).render(ragdoll, level, poseStack, bufferSource, camPos);
         }
+
+        bufferSource.endBatch();
+
     }
 
 
