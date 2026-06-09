@@ -1,4 +1,4 @@
-package dev.wren.disjointed.bodies.ragdoll.group;
+package dev.wren.disjointed.bodies.ragdoll;
 
 import dev.wren.disjointed.util.Utils;
 import net.minecraft.nbt.CompoundTag;

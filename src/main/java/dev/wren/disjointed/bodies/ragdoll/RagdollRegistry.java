@@ -3,9 +3,8 @@ package dev.wren.disjointed.bodies.ragdoll;
 import dev.wren.disjointed.bodies.ragdoll.client.ClientRagdollRenderer;
 import dev.wren.disjointed.bodies.ragdoll.client.renderer.PlayerRagdollRenderer;
 import dev.wren.disjointed.bodies.ragdoll.client.renderer.SlimPlayerRagdollRenderer;
-import dev.wren.disjointed.bodies.ragdoll.group.PlayerRagdoll;
-import dev.wren.disjointed.bodies.ragdoll.group.Ragdoll;
-import dev.wren.disjointed.bodies.ragdoll.group.SlimPlayerRagdoll;
+import dev.wren.disjointed.bodies.ragdoll.types.PlayerRagdoll;
+import dev.wren.disjointed.bodies.ragdoll.types.SlimPlayerRagdoll;
 import dev.wren.disjointed.util.Utils;
 import net.minecraft.nbt.CompoundTag;
 

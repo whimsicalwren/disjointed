@@ -1,10 +1,9 @@
-package dev.wren.disjointed.bodies;
+package dev.wren.disjointed.bodies.linked;
 
 import dev.wren.disjointed.Disjointed;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix3d;
 import org.joml.Quaterniond;
 import org.joml.Vector3d;
@@ -20,7 +19,7 @@ import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
 import static dev.wren.disjointed.util.Utils.*;
 
-public class BodyHelper {
+public class LinkedBodyHelper {
 
     public static ServerVsBody createBody(ServerLevel level, Entity entity) {
         try {

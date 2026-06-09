@@ -1,7 +1,7 @@
 package dev.wren.disjointed.mixin;
 
-import dev.wren.disjointed.bodies.EntityVsBodyExtension;
-import dev.wren.disjointed.bodies.PhysTickHandler;
+import dev.wren.disjointed.bodies.linked.EntityVsBodyExtension;
+import dev.wren.disjointed.bodies.linked.PhysTickHandler;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;

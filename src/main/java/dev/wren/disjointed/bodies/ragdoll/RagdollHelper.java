@@ -1,8 +1,5 @@
-package dev.wren.disjointed.bodies.ragdoll.group;
+package dev.wren.disjointed.bodies.ragdoll;
 
-import dev.wren.disjointed.bodies.ragdoll.RagdollFactory;
-import dev.wren.disjointed.bodies.ragdoll.RagdollManager;
-import dev.wren.disjointed.bodies.ragdoll.RagdollRegistry;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3d;

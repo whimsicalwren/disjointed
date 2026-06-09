@@ -2,7 +2,6 @@ package dev.wren.disjointed.bodies.ragdoll;
 
 import dev.wren.disjointed.Disjointed;
 import dev.wren.disjointed.DisjointedNetwork;
-import dev.wren.disjointed.bodies.ragdoll.group.Ragdoll;
 import dev.wren.disjointed.bodies.ragdoll.packet.AddRagdollPacket;
 import dev.wren.disjointed.bodies.ragdoll.packet.ClearAllRagdollsPacket;
 import net.minecraft.nbt.CompoundTag;

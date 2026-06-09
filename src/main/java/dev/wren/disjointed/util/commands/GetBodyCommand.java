@@ -1,7 +1,7 @@
 package dev.wren.disjointed.util.commands;
 
 import com.mojang.brigadier.builder.ArgumentBuilder;
-import dev.wren.disjointed.bodies.EntityVsBodyExtension;
+import dev.wren.disjointed.bodies.linked.EntityVsBodyExtension;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;

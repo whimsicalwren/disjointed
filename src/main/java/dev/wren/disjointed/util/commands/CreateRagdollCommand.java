@@ -4,18 +4,13 @@ import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import dev.wren.disjointed.bodies.ragdoll.RagdollFactory;
 import dev.wren.disjointed.bodies.ragdoll.RagdollRegistry;
-import dev.wren.disjointed.bodies.ragdoll.group.RagdollHelper;
+import dev.wren.disjointed.bodies.ragdoll.RagdollHelper;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3d;
-
-import java.util.List;
 
 public class CreateRagdollCommand {
 

@@ -1,7 +1,7 @@
 package dev.wren.disjointed.util.commands;
 
 import com.mojang.brigadier.builder.ArgumentBuilder;
-import dev.wren.disjointed.bodies.BodyHelper;
+import dev.wren.disjointed.bodies.linked.LinkedBodyHelper;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -22,7 +22,7 @@ public class CreateBodyCommand {
                                 Entity entity = EntityArgument.getEntity(ctx, "target");
                                 ServerLevel level = ctx.getSource().getLevel();
 
-                                ServerVsBody body = BodyHelper.createBody(level, entity);
+                                ServerVsBody body = LinkedBodyHelper.createBody(level, entity);
                                 long id = body.getId();
 
                                 Component message = Component.literal("Created body with id " + id + " for entity " + entity.getName().getString());

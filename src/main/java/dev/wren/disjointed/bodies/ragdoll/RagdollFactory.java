@@ -1,6 +1,5 @@
 package dev.wren.disjointed.bodies.ragdoll;
 
-import dev.wren.disjointed.bodies.ragdoll.group.Ragdoll;
 import net.minecraft.server.level.ServerLevel;
 import org.joml.Vector3d;
 

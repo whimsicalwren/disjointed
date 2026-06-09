@@ -1,12 +1,10 @@
 package dev.wren.disjointed.bodies.ragdoll.client.renderer;
 
 import dev.wren.disjointed.bodies.ragdoll.RagdollSlots;
-import dev.wren.disjointed.bodies.ragdoll.client.BaseRagdollRenderer;
 import dev.wren.disjointed.bodies.ragdoll.client.ClientRagdoll;
 import dev.wren.disjointed.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.PlayerModel;
-import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.player.AbstractClientPlayer;

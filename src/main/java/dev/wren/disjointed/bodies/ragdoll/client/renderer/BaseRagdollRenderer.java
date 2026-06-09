@@ -1,9 +1,10 @@
-package dev.wren.disjointed.bodies.ragdoll.client;
+package dev.wren.disjointed.bodies.ragdoll.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import dev.wren.disjointed.bodies.ragdoll.client.ClientRagdoll;
+import dev.wren.disjointed.bodies.ragdoll.client.ClientRagdollRenderer;
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LightTexture;
