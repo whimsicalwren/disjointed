@@ -6,6 +6,6 @@ import org.joml.Vector3d;
 import java.util.List;
 
 @FunctionalInterface
-public interface RagdollFactory {
-    Ragdoll create(ServerLevel level, Vector3d pos, List<String> args, boolean isStatic);
+public interface RagdollFactory<E extends Enum<E>> {
+    Ragdoll<E> create(ServerLevel level, Vector3d pos, List<String> args, boolean isStatic);
 }

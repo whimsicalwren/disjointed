@@ -14,9 +14,7 @@ import java.util.Map;
 import java.util.UUID;
 
 
-import static dev.wren.disjointed.bodies.ragdoll.RagdollSlots.EnderDragon.*;
-
-public class EnderDragonRagdollRenderer extends BaseRagdollRenderer<EnderDragonRenderer.DragonModel> {
+public class EnderDragonRagdollRenderer extends BaseRagdollRenderer<EnderDragonRenderer.DragonModel, RagdollSlots.EnderDragon> {
 
     protected final Map<UUID, EnderDragonRenderer.DragonModel> models = new HashMap<>();
 
@@ -29,15 +27,15 @@ public class EnderDragonRagdollRenderer extends BaseRagdollRenderer<EnderDragonR
     }
 
     @Override
-    protected ResourceLocation getOrLoadTexture(ClientRagdoll ragdoll) {
+    protected ResourceLocation getOrLoadTexture(ClientRagdoll<RagdollSlots.EnderDragon> ragdoll) {
         return ResourceLocation.withDefaultNamespace("textures/entity/enderdragon/dragon.png");
     }
 
     @Override
-    protected ModelPart getModelPartForSlot(String slot, EnderDragonRenderer.DragonModel modelRoot) {
+    protected ModelPart getModelPartForSlot(RagdollSlots.EnderDragon slot, EnderDragonRenderer.DragonModel modelRoot) {
         return switch (slot) {
-            case LOWER_MOUTH -> modelRoot.jaw;
-            case UPPER_MOUTH, HEAD -> modelRoot.head;
+            case JAW -> modelRoot.jaw;
+            case LIP, HEAD -> modelRoot.head;
             case BODY -> modelRoot.body;
             case LEFT_WING -> modelRoot.leftWing;
             case LEFT_WING_TIP -> modelRoot.leftWingTip;
@@ -60,7 +58,7 @@ public class EnderDragonRagdollRenderer extends BaseRagdollRenderer<EnderDragonR
     }
 
     @Override
-    protected Vector3d getOffsetVector(String slot) {
+    protected Vector3d getOffsetVector(RagdollSlots.EnderDragon slot) {
         return null;
     }
 }

@@ -23,14 +23,14 @@ import org.valkyrienskies.core.api.bodies.properties.BodyTransform;
 import java.util.Map;
 import java.util.UUID;
 
-public abstract class BaseRagdollRenderer<M extends EntityModel<?>> implements ClientRagdollRenderer {
+public abstract class BaseRagdollRenderer<M extends EntityModel<?>, E extends Enum<E>> implements ClientRagdollRenderer<E> {
 
-    public void render(ClientRagdoll ragdoll, ClientLevel level, PoseStack poseStack, MultiBufferSource.BufferSource bufferSource, Vec3 camPos) {
+    public void render(ClientRagdoll<E> ragdoll, ClientLevel level, PoseStack poseStack, MultiBufferSource.BufferSource bufferSource, Vec3 camPos) {
         M model = getOrBakeModel(ragdoll.uuid());
         ResourceLocation texture = getOrLoadTexture(ragdoll);
 
-        for (Map.Entry<String, Long> entry : ragdoll.pieces().entrySet()) {
-            String slot = entry.getKey();
+        for (Map.Entry<E, Long> entry : ragdoll.pieces().entrySet()) {
+            E slot = entry.getKey();
             ClientVsBody body = getBody(level, entry.getValue());
             if (body == null) continue;
 
@@ -65,13 +65,13 @@ public abstract class BaseRagdollRenderer<M extends EntityModel<?>> implements C
 
     protected abstract M getOrBakeModel(UUID uuid);
 
-    protected abstract ResourceLocation getOrLoadTexture(ClientRagdoll ragdoll);
+    protected abstract ResourceLocation getOrLoadTexture(ClientRagdoll<E> ragdoll);
 
-    protected abstract ModelPart getModelPartForSlot(String slot, M modelRoot);
+    protected abstract ModelPart getModelPartForSlot(E slot, M modelRoot);
 
-    protected ModelPart getModelLayerPartForSlot(String slot, M modelRoot) {
+    protected ModelPart getModelLayerPartForSlot(E slot, M modelRoot) {
         return null;
     }
 
-    protected abstract Vector3d getOffsetVector(String slot);
+    protected abstract Vector3d getOffsetVector(E slot);
 }

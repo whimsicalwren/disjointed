@@ -18,7 +18,7 @@ import java.util.UUID;
 
 import static dev.wren.disjointed.util.Utils.pxToBlocks;
 
-public class SlimPlayerRagdollRenderer extends BaseRagdollRenderer<PlayerModel<AbstractClientPlayer>> {
+public class SlimPlayerRagdollRenderer extends BaseRagdollRenderer<PlayerModel<AbstractClientPlayer>, RagdollSlots.Humanoid> {
 
     protected final Map<UUID, PlayerModel<AbstractClientPlayer>> models = new HashMap<>();
     protected final Map<UUID, ResourceLocation> textures = new HashMap<>();
@@ -32,7 +32,7 @@ public class SlimPlayerRagdollRenderer extends BaseRagdollRenderer<PlayerModel<A
     }
 
     @Override
-    protected ResourceLocation getOrLoadTexture(ClientRagdoll ragdoll) {
+    protected ResourceLocation getOrLoadTexture(ClientRagdoll<RagdollSlots.Humanoid> ragdoll) {
         if (textures.containsKey(ragdoll.uuid()))
             return textures.get(ragdoll.uuid());
 
@@ -47,41 +47,38 @@ public class SlimPlayerRagdollRenderer extends BaseRagdollRenderer<PlayerModel<A
     }
 
     @Override
-    protected ModelPart getModelPartForSlot(String slot, PlayerModel<AbstractClientPlayer> modelRoot) {
+    protected ModelPart getModelPartForSlot(RagdollSlots.Humanoid slot, PlayerModel<AbstractClientPlayer> modelRoot) {
         return switch (slot) {
-            case RagdollSlots.Humanoid.HEAD -> modelRoot.head;
-            case RagdollSlots.Humanoid.TORSO -> modelRoot.body;
-            case RagdollSlots.Humanoid.LEFT_ARM -> modelRoot.leftArm;
-            case RagdollSlots.Humanoid.RIGHT_ARM -> modelRoot.rightArm;
-            case RagdollSlots.Humanoid.LEFT_LEG -> modelRoot.leftLeg;
-            case RagdollSlots.Humanoid.RIGHT_LEG -> modelRoot.rightLeg;
-            default -> null;
+            case HEAD -> modelRoot.head;
+            case TORSO -> modelRoot.body;
+            case LEFT_ARM -> modelRoot.leftArm;
+            case RIGHT_ARM -> modelRoot.rightArm;
+            case LEFT_LEG -> modelRoot.leftLeg;
+            case RIGHT_LEG -> modelRoot.rightLeg;
         };
     }
 
     @Override
-    protected ModelPart getModelLayerPartForSlot(String slot, PlayerModel<AbstractClientPlayer> modelRoot) {
+    protected ModelPart getModelLayerPartForSlot(RagdollSlots.Humanoid slot, PlayerModel<AbstractClientPlayer> modelRoot) {
         return switch (slot) {
-            case RagdollSlots.Humanoid.HEAD -> modelRoot.hat;
-            case RagdollSlots.Humanoid.TORSO -> modelRoot.jacket;
-            case RagdollSlots.Humanoid.LEFT_ARM -> modelRoot.leftSleeve;
-            case RagdollSlots.Humanoid.RIGHT_ARM -> modelRoot.rightSleeve;
-            case RagdollSlots.Humanoid.LEFT_LEG -> modelRoot.leftPants;
-            case RagdollSlots.Humanoid.RIGHT_LEG -> modelRoot.rightPants;
-            default -> null;
+            case HEAD -> modelRoot.hat;
+            case TORSO -> modelRoot.jacket;
+            case LEFT_ARM -> modelRoot.leftSleeve;
+            case RIGHT_ARM -> modelRoot.rightSleeve;
+            case LEFT_LEG -> modelRoot.leftPants;
+            case RIGHT_LEG -> modelRoot.rightPants;
         };
     }
 
     @Override
-    protected Vector3d getOffsetVector(String slot) {
+    protected Vector3d getOffsetVector(RagdollSlots.Humanoid slot) {
         return switch (slot) {
-            case RagdollSlots.Humanoid.HEAD      -> new Vector3d(0, pxToBlocks(-4), 0);
-            case RagdollSlots.Humanoid.TORSO     -> new Vector3d(0, 0.375f, 0);
-            case RagdollSlots.Humanoid.LEFT_ARM -> new Vector3d(pxToBlocks(5.5f), 0.40625, 0);
-            case RagdollSlots.Humanoid.RIGHT_ARM -> new Vector3d(pxToBlocks(-5.5f), 0.40625, 0);
-            case RagdollSlots.Humanoid.LEFT_LEG -> new Vector3d(pxToBlocks(2), pxToBlocks(18), 0);
-            case RagdollSlots.Humanoid.RIGHT_LEG -> new Vector3d(pxToBlocks(-2), pxToBlocks(18), 0);
-            default -> new Vector3d();
+            case HEAD      -> new Vector3d(0, pxToBlocks(-4), 0);
+            case TORSO     -> new Vector3d(0, 0.375f, 0);
+            case LEFT_ARM -> new Vector3d(pxToBlocks(5.5f), 0.40625, 0);
+            case RIGHT_ARM -> new Vector3d(pxToBlocks(-5.5f), 0.40625, 0);
+            case LEFT_LEG -> new Vector3d(pxToBlocks(2), pxToBlocks(18), 0);
+            case RIGHT_LEG -> new Vector3d(pxToBlocks(-2), pxToBlocks(18), 0);
         };
     }
 }

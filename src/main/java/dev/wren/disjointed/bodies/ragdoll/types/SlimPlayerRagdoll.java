@@ -5,7 +5,6 @@ import dev.wren.disjointed.bodies.ragdoll.RagdollSlots;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import org.joml.Vector3d;
-import org.valkyrienskies.core.api.bodies.ServerVsBody;
 import org.valkyrienskies.core.api.world.PhysLevel;
 import org.valkyrienskies.core.internal.joints.VSSphericalJoint;
 import org.valkyrienskies.core.internal.world.VsiServerShipWorld;
@@ -13,19 +12,16 @@ import org.valkyrienskies.mod.common.VSGameUtilsKt;
 import org.valkyrienskies.mod.common.ValkyrienSkiesMod;
 import org.valkyrienskies.mod.common.util.GameToPhysicsAdapter;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static dev.wren.disjointed.bodies.ragdoll.RagdollShapes.Humanoid.*;
 import static dev.wren.disjointed.bodies.ragdoll.RagdollUtils.createRagdollJoint;
 import static dev.wren.disjointed.bodies.ragdoll.RagdollUtils.createRagdollPieceData;
 import static dev.wren.disjointed.util.Utils.pxToBlocks;
 
-public class SlimPlayerRagdoll implements Ragdoll {
+public class SlimPlayerRagdoll implements Ragdoll<RagdollSlots.Humanoid> {
 
-    private final HashMap<String, Long> pieces;
+    private final EnumMap<RagdollSlots.Humanoid, Long> pieces;
     private final UUID uuid;
     public final String username;
 
@@ -34,25 +30,25 @@ public class SlimPlayerRagdoll implements Ragdoll {
     }
 
     public SlimPlayerRagdoll(String username) {
-        this.pieces = new HashMap<>(6);
+        this.pieces = new EnumMap<>(RagdollSlots.Humanoid.class);
         this.uuid = UUID.randomUUID();
         this.username = username;
     }
 
-    public SlimPlayerRagdoll(UUID uuid, String username, HashMap<String, Long> pieces) {
+    public SlimPlayerRagdoll(UUID uuid, String username, EnumMap<RagdollSlots.Humanoid, Long> pieces) {
         this.pieces = pieces;
         this.uuid = uuid;
         this.username = username;
     }
 
     @Override
-    public Map<String, Long> getPieces() {
+    public EnumMap<RagdollSlots.Humanoid, Long> getPieces() {
         return pieces;
     }
 
     @Override
-    public List<String> getSlots() {
-        return RagdollSlots.Humanoid.allSlots();
+    public List<RagdollSlots.Humanoid> getSlots() {
+        return RagdollSlots.Humanoid.asList();
     }
 
     @Override
@@ -66,7 +62,7 @@ public class SlimPlayerRagdoll implements Ragdoll {
     }
 
     @Override
-    public Long getSlot(String slot) {
+    public Long getSlot(RagdollSlots.Humanoid slot) {
         return pieces.get(slot);
     }
 

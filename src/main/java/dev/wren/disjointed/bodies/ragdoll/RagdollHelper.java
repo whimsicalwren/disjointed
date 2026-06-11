@@ -9,13 +9,13 @@ import java.util.List;
 
 public class RagdollHelper {
 
-    public static int createRagdoll(ServerLevel level, Vec3 pos, String type, String argsString, boolean isStatic) {
+    public static <E extends Enum<E>> int createRagdoll(ServerLevel level, Vec3 pos, String type, String argsString, boolean isStatic) {
         List<String> args = List.of(argsString.split(","));
 
-        RagdollFactory factory = RagdollRegistry.getFactory(type);
+        RagdollFactory<E> factory = RagdollRegistry.getFactory(type);
         if (factory == null) return 0;
 
-        Ragdoll ragdoll = factory.create(level, new Vector3d(pos.x, pos.y, pos.z), args, isStatic);
+        Ragdoll<E> ragdoll = factory.create(level, new Vector3d(pos.x, pos.y, pos.z), args, isStatic);
 
         ragdoll.createJoints(level);
 

@@ -1,5 +1,6 @@
 package dev.wren.disjointed.bodies.ragdoll.packet;
 
+import dev.wren.disjointed.bodies.ragdoll.RagdollRegistry;
 import dev.wren.disjointed.bodies.ragdoll.client.ClientRagdoll;
 import dev.wren.disjointed.bodies.ragdoll.client.ClientRagdollManager;
 import net.minecraft.client.Minecraft;
@@ -12,53 +13,44 @@ import org.valkyrienskies.core.api.bodies.QueryableVsBodyData;
 import org.valkyrienskies.core.api.bodies.VsBody;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-public class AddRagdollPacket {
+public class AddRagdollPacket<E extends Enum<E>> {
     private final UUID uuid;
     private final String typeId;
-    private final Map<String, Long> pieces;
+    private final EnumMap<E, Long> pieces;
     private final CompoundTag extraData;
 
-    public AddRagdollPacket(UUID uuid, String typeId, Map<String, Long> pieces, CompoundTag extraData) {
+    public AddRagdollPacket(UUID uuid, String typeId, EnumMap<E, Long> pieces, CompoundTag extraData) {
         this.uuid = uuid;
         this.typeId = typeId;
         this.pieces = pieces;
         this.extraData = extraData;
     }
 
-    public static void encode(AddRagdollPacket packet, FriendlyByteBuf buf) {
-        buf.writeUUID(packet.uuid);
+    public static <E extends Enum<E>> void encode(AddRagdollPacket<E> packet, FriendlyByteBuf buf) {
         buf.writeUtf(packet.typeId);
+        buf.writeUUID(packet.uuid);
         buf.writeNbt(packet.extraData);
 
         buf.writeInt(packet.pieces.size());
-        for (Map.Entry<String, Long> entry : packet.pieces.entrySet()) {
-            buf.writeUtf(entry.getKey());
+        for (Map.Entry<E, Long> entry : packet.pieces.entrySet()) {
+            buf.writeEnum(entry.getKey());
             buf.writeLong(entry.getValue());
         }
     }
 
-    public static AddRagdollPacket decode(FriendlyByteBuf buf) {
-        UUID uuid = buf.readUUID();
-        String typeId = buf.readUtf();
-        CompoundTag extraData = buf.readNbt();
-
-        int size = buf.readInt();
-        Map<String, Long> pieces = new HashMap<>();
-        for (int i = 0; i < size; i++) {
-            pieces.put(buf.readUtf(), buf.readLong());
-        }
-
-        return new AddRagdollPacket(uuid, typeId, pieces, extraData);
+    public static <E extends Enum<E>> AddRagdollPacket<E> decode(FriendlyByteBuf buf) {
+        return RagdollRegistry.decode(buf);
     }
 
-    public static void handle(AddRagdollPacket packet, Supplier<NetworkEvent.Context> ctx) {
+    public static <E extends Enum<E>> void handle(AddRagdollPacket<E> packet, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            ClientRagdoll ragdoll = new ClientRagdoll(packet.uuid, packet.typeId, packet.pieces, packet.extraData);
+            ClientRagdoll<E> ragdoll = new ClientRagdoll<>(packet.uuid, packet.typeId, packet.pieces, packet.extraData);
             ClientRagdollManager.register(ragdoll);
         });
         ctx.get().setPacketHandled(true);

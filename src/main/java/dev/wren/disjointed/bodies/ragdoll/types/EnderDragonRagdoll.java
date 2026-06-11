@@ -8,41 +8,38 @@ import org.valkyrienskies.core.api.world.PhysLevel;
 import org.valkyrienskies.core.internal.world.VsiServerShipWorld;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
-import static dev.wren.disjointed.bodies.ragdoll.RagdollSlots.EnderDragon.*;
 import static dev.wren.disjointed.bodies.ragdoll.RagdollShapes.EnderDragon.*;
+import static dev.wren.disjointed.bodies.ragdoll.RagdollSlots.EnderDragon.*;
 import static dev.wren.disjointed.bodies.ragdoll.RagdollUtils.createRagdollJoint;
 import static dev.wren.disjointed.bodies.ragdoll.RagdollUtils.createRagdollPieceData;
 import static dev.wren.disjointed.util.Utils.pxToBlocks;
 
-public class EnderDragonRagdoll implements Ragdoll {
+public class EnderDragonRagdoll implements Ragdoll<RagdollSlots.EnderDragon> {
 
-    private final HashMap<String, Long> pieces;
+    private final EnumMap<RagdollSlots.EnderDragon, Long> pieces;
     private final UUID uuid;
 
 
     public EnderDragonRagdoll() {
-        this.pieces = new HashMap<>(37);
+        this.pieces = new EnumMap<>(RagdollSlots.EnderDragon.class);
         this.uuid = UUID.randomUUID();
     }
 
-    public EnderDragonRagdoll(UUID uuid, HashMap<String, Long> pieces) {
+    public EnderDragonRagdoll(UUID uuid, EnumMap<RagdollSlots.EnderDragon, Long> pieces) {
         this.pieces = pieces;
         this.uuid = uuid;
     }
 
     @Override
-    public Map<String, Long> getPieces() {
+    public EnumMap<RagdollSlots.EnderDragon, Long> getPieces() {
         return pieces;
     }
 
     @Override
-    public List<String> getSlots() {
-        return RagdollSlots.EnderDragon.allSlots();
+    public List<RagdollSlots.EnderDragon> getSlots() {
+        return RagdollSlots.EnderDragon.asList();
     }
 
     @Override
@@ -56,7 +53,7 @@ public class EnderDragonRagdoll implements Ragdoll {
     }
 
     @Override
-    public Long getSlot(String slot) {
+    public Long getSlot(RagdollSlots.EnderDragon slot) {
         return pieces.get(slot);
     }
 
@@ -74,8 +71,8 @@ public class EnderDragonRagdoll implements Ragdoll {
         EnderDragonRagdoll ragdoll = new EnderDragonRagdoll();
         VsiServerShipWorld shipWorld = VSGameUtilsKt.getShipObjectWorld(level);
 
-        ragdoll.addSlot(LOWER_MOUTH, shipWorld.createBody(createRagdollPieceData(level, lowerMouth(), new Vector3d(pos), 1000, isStatic)));
-        ragdoll.addSlot(UPPER_MOUTH, shipWorld.createBody(createRagdollPieceData(level, upperMouth(), new Vector3d(pos), 1000, isStatic)));
+        ragdoll.addSlot(JAW, shipWorld.createBody(createRagdollPieceData(level, lowerMouth(), new Vector3d(pos), 1000, isStatic)));
+        ragdoll.addSlot(LIP, shipWorld.createBody(createRagdollPieceData(level, upperMouth(), new Vector3d(pos), 1000, isStatic)));
 
         ragdoll.addSlot(HEAD, shipWorld.createBody(createRagdollPieceData(level, head(), new Vector3d(pos), 1000, isStatic)));
         ragdoll.addSlot(BODY, shipWorld.createBody(createRagdollPieceData(level, body(), new Vector3d(pos), 1000, isStatic)));

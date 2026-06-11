@@ -13,7 +13,7 @@ public class FixRagdollJointsCommand {
                 .executes(ctx -> {
                     RagdollManager manager = RagdollManager.get(ctx.getSource().getLevel());
 
-                    for (Ragdoll group : manager.RAGDOLLS.values()) {
+                    for (Ragdoll<?> group : manager.RAGDOLLS.values()) {
                         group.createJoints(ctx.getSource().getLevel());
                     }
 

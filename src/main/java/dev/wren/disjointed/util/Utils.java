@@ -24,10 +24,7 @@ import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
@@ -143,23 +140,23 @@ public class Utils {
         skinThread.start();
     } // i hate this
 
-    public static <V> CompoundTag writeMap(Map<String, V> map, TriConsumer<CompoundTag, String, V> writeFunc) {
+    public static <E extends Enum<E>, V> CompoundTag writeMap(Map<E, V> map, TriConsumer<CompoundTag, String, V> writeFunc) {
         CompoundTag tag = new CompoundTag();
 
-        for (Map.Entry<String, V> value : map.entrySet()) {
-            writeFunc.accept(tag, value.getKey(), value.getValue());
+        for (Map.Entry<E, V> value : map.entrySet()) {
+            writeFunc.accept(tag, value.getKey().name(), value.getValue());
         }
 
         return tag;
     }
 
-    public static <V> HashMap<String, V> readMap(CompoundTag tag, List<String> keys, BiFunction<CompoundTag, String, V> readFunc) {
-        HashMap<String, V> hashMap = new HashMap<>();
+    public static <E extends Enum<E>, V> EnumMap<E, V> readMap(CompoundTag tag, List<E> keys, Class<E> enumClass, BiFunction<CompoundTag, String, V> readFunc) {
+        EnumMap<E, V> map = new EnumMap<>(enumClass);
 
-        for (String key : keys) {
-            hashMap.put(key, readFunc.apply(tag, key));
+        for (E key : keys) {
+            map.put(key, readFunc.apply(tag, key.name()));
         }
 
-        return hashMap;
+        return map;
     }
 }

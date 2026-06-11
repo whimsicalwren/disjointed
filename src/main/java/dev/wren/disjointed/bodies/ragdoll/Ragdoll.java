@@ -7,20 +7,21 @@ import org.valkyrienskies.core.api.bodies.ServerVsBody;
 import org.valkyrienskies.core.api.world.PhysLevel;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import static dev.wren.disjointed.Disjointed.LOGGER;
 
-public interface Ragdoll {
+public interface Ragdoll<E extends Enum<E>> {
 
-    Map<String, Long> getPieces();
-    List<String> getSlots();
+    EnumMap<E, Long> getPieces();
+    List<E> getSlots();
     UUID getUUID();
     String getTypeId();
 
-    Long getSlot(String slot);
+    Long getSlot(E slot);
 
     void createJoints(ServerLevel level);
     void changeCollision(PhysLevel level);
@@ -33,7 +34,7 @@ public interface Ragdoll {
     }
 
 
-    default ServerVsBody addSlot(String slot, ServerVsBody body) {
+    default ServerVsBody addSlot(E slot, ServerVsBody body) {
         if (!getSlots().contains(slot)) {
             LOGGER.error("Slot {} is not a valid slot for this ragdoll! Valid slots are: {}", slot, Utils.listAsString(getSlots()));
             return null;

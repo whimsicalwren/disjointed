@@ -20,7 +20,7 @@ import java.util.UUID;
 public class RagdollManager extends SavedData {
     private static final String NAME = "disjointed_ragdolls";
 
-    public final Map<UUID, Ragdoll> RAGDOLLS = new HashMap<>();
+    public final Map<UUID, Ragdoll<?>> RAGDOLLS = new HashMap<>();
 
     public static RagdollManager get(ServerLevel level) {
         DimensionDataStorage storage = level.getDataStorage();
@@ -34,7 +34,7 @@ public class RagdollManager extends SavedData {
         for (Tag t : list) {
             CompoundTag ragdollTag = (CompoundTag) t;
 
-            Ragdoll group = RagdollRegistry.deserialize(ragdollTag);
+            Ragdoll<?> group = RagdollRegistry.deserialize(ragdollTag);
 
             data.RAGDOLLS.put(group.getUUID(), group);
         }
@@ -46,7 +46,7 @@ public class RagdollManager extends SavedData {
     @Override
     public @NotNull CompoundTag save(@NotNull CompoundTag tag) {
         ListTag list = new ListTag();
-        for (Map.Entry<UUID, Ragdoll> entry : RAGDOLLS.entrySet()) {
+        for (Map.Entry<UUID, Ragdoll<?>> entry : RAGDOLLS.entrySet()) {
             list.add(entry.getValue().serialize());
         }
         tag.put("ragdolls", list);
@@ -54,10 +54,10 @@ public class RagdollManager extends SavedData {
         return tag;
     }
 
-    public void addRagdoll(Ragdoll ragdoll) {
+    public <E extends Enum<E>> void addRagdoll(Ragdoll<E> ragdoll) {
         RAGDOLLS.put(ragdoll.getUUID(), ragdoll);
 
-        DisjointedNetwork.sendToAll(new AddRagdollPacket(ragdoll.getUUID(), ragdoll.getTypeId(), ragdoll.getPieces(), ragdoll.getAdditionalData()));
+        DisjointedNetwork.sendToAll(new AddRagdollPacket<>(ragdoll.getUUID(), ragdoll.getTypeId(), ragdoll.getPieces(), ragdoll.getAdditionalData()));
 
         setDirty();
     }
@@ -69,8 +69,8 @@ public class RagdollManager extends SavedData {
 
         DisjointedNetwork.sendToPlayer(player, new ClearAllRagdollsPacket());
 
-        for (Ragdoll ragdoll : manager.RAGDOLLS.values()) {
-            DisjointedNetwork.sendToPlayer(player, new AddRagdollPacket(ragdoll.getUUID(), ragdoll.getTypeId(), ragdoll.getPieces(), ragdoll.getAdditionalData()));
+        for (Ragdoll<?> ragdoll : manager.RAGDOLLS.values()) {
+            DisjointedNetwork.sendToPlayer(player, new AddRagdollPacket<>(ragdoll.getUUID(), ragdoll.getTypeId(), ragdoll.getPieces(), ragdoll.getAdditionalData()));
         }
 
     }
