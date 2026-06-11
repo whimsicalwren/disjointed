@@ -16,6 +16,8 @@ public class PhysTickHandler {
         for (EntityVsBodyExtension extension : LINKED_BODIES) {
             ServerVsBody vody = extension.getBody();
             if (vody != null) {
+                vody.setStatic(true);
+                System.out.println("setting kinematic target to " + extension.getPosition() + " for body " + extension.getBodyId() + " for entity " + extension.getClass());
                 vody.setKinematicTarget(createBodyPose(extension.getPosition()));
             }
         }

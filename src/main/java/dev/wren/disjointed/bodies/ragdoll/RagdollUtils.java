@@ -17,7 +17,7 @@ import org.valkyrienskies.core.internal.joints.VSJointPose;
 import org.valkyrienskies.core.internal.joints.VSSphericalJoint;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
-import static dev.wren.disjointed.util.Utils.all;
+import static dev.wren.disjointed.util.Utils.pxToBlocks;
 
 public class RagdollUtils {
 
@@ -25,7 +25,7 @@ public class RagdollUtils {
         return new VsBodyCreateData(
                 VSGameUtilsKt.getDimensionId(level),
                 new BodyInertiaDataImpl(shapeData.getAabb().center(new Vector3d()), mass, new Matrix3d()),
-                new BodyKinematicsImpl(all(0), all(0), new BodyTransformImpl(pos, new Quaterniond(), all(1), all(0))),
+                new BodyKinematicsImpl(new Vector3d(), new Vector3d(), new BodyTransformImpl(pos, new Quaterniond(), new Vector3d(1), new Vector3d())),
                 shapeData,
                 isStatic,
                 VsBodyDefaults.DEFAULT_COLLISION_MASK,
@@ -52,22 +52,6 @@ public class RagdollUtils {
     }
     public static VSD6Joint.LimitCone createLimitCone(float y, float z) {
         return new VSD6Joint.LimitCone(y, z, null, 0.1f, 10f, null);
-    }
-
-    public static BodyShapeData headShape() {
-        return new BoxBodyShapeData(all(0.5));
-    }
-
-    public static BodyShapeData torsoShape() {
-        return new BoxBodyShapeData(new Vector3d(0.5, 0.75, 0.25));
-    }
-
-    public static BodyShapeData armOrLegShape() {
-        return new BoxBodyShapeData(new Vector3d(0.25, 0.75, 0.25));
-    }
-
-    public static BodyShapeData slimArmShape() {
-        return new BoxBodyShapeData(new Vector3d(0.1875, 0.75, 0.25));
     }
 
 }

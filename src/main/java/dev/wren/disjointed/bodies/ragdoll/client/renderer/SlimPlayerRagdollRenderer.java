@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static dev.wren.disjointed.util.Utils.all;
 import static dev.wren.disjointed.util.Utils.pxToBlocks;
 
 public class SlimPlayerRagdollRenderer extends BaseRagdollRenderer<PlayerModel<AbstractClientPlayer>> {
@@ -50,12 +49,12 @@ public class SlimPlayerRagdollRenderer extends BaseRagdollRenderer<PlayerModel<A
     @Override
     protected ModelPart getModelPartForSlot(String slot, PlayerModel<AbstractClientPlayer> modelRoot) {
         return switch (slot) {
-            case RagdollSlots.Player.HEAD -> modelRoot.head;
-            case RagdollSlots.Player.TORSO -> modelRoot.body;
-            case RagdollSlots.Player.LEFT_ARM -> modelRoot.leftArm;
-            case RagdollSlots.Player.RIGHT_ARM -> modelRoot.rightArm;
-            case RagdollSlots.Player.LEFT_LEG -> modelRoot.leftLeg;
-            case RagdollSlots.Player.RIGHT_LEG -> modelRoot.rightLeg;
+            case RagdollSlots.Humanoid.HEAD -> modelRoot.head;
+            case RagdollSlots.Humanoid.TORSO -> modelRoot.body;
+            case RagdollSlots.Humanoid.LEFT_ARM -> modelRoot.leftArm;
+            case RagdollSlots.Humanoid.RIGHT_ARM -> modelRoot.rightArm;
+            case RagdollSlots.Humanoid.LEFT_LEG -> modelRoot.leftLeg;
+            case RagdollSlots.Humanoid.RIGHT_LEG -> modelRoot.rightLeg;
             default -> null;
         };
     }
@@ -63,12 +62,12 @@ public class SlimPlayerRagdollRenderer extends BaseRagdollRenderer<PlayerModel<A
     @Override
     protected ModelPart getModelLayerPartForSlot(String slot, PlayerModel<AbstractClientPlayer> modelRoot) {
         return switch (slot) {
-            case RagdollSlots.Player.HEAD -> modelRoot.hat;
-            case RagdollSlots.Player.TORSO -> modelRoot.jacket;
-            case RagdollSlots.Player.LEFT_ARM -> modelRoot.leftSleeve;
-            case RagdollSlots.Player.RIGHT_ARM -> modelRoot.rightSleeve;
-            case RagdollSlots.Player.LEFT_LEG -> modelRoot.leftPants;
-            case RagdollSlots.Player.RIGHT_LEG -> modelRoot.rightPants;
+            case RagdollSlots.Humanoid.HEAD -> modelRoot.hat;
+            case RagdollSlots.Humanoid.TORSO -> modelRoot.jacket;
+            case RagdollSlots.Humanoid.LEFT_ARM -> modelRoot.leftSleeve;
+            case RagdollSlots.Humanoid.RIGHT_ARM -> modelRoot.rightSleeve;
+            case RagdollSlots.Humanoid.LEFT_LEG -> modelRoot.leftPants;
+            case RagdollSlots.Humanoid.RIGHT_LEG -> modelRoot.rightPants;
             default -> null;
         };
     }
@@ -76,13 +75,13 @@ public class SlimPlayerRagdollRenderer extends BaseRagdollRenderer<PlayerModel<A
     @Override
     protected Vector3d getOffsetVector(String slot) {
         return switch (slot) {
-            case RagdollSlots.Player.HEAD      -> new Vector3d(0, pxToBlocks(-4), 0);
-            case RagdollSlots.Player.TORSO     -> new Vector3d(0, 0.375f, 0);
-            case RagdollSlots.Player.LEFT_ARM -> new Vector3d(pxToBlocks(5.5f), 0.40625, 0);
-            case RagdollSlots.Player.RIGHT_ARM -> new Vector3d(pxToBlocks(-5.5f), 0.40625, 0);
-            case RagdollSlots.Player.LEFT_LEG -> new Vector3d(pxToBlocks(2), pxToBlocks(18), 0);
-            case RagdollSlots.Player.RIGHT_LEG -> new Vector3d(pxToBlocks(-2), pxToBlocks(18), 0);
-            default -> all(0);
+            case RagdollSlots.Humanoid.HEAD      -> new Vector3d(0, pxToBlocks(-4), 0);
+            case RagdollSlots.Humanoid.TORSO     -> new Vector3d(0, 0.375f, 0);
+            case RagdollSlots.Humanoid.LEFT_ARM -> new Vector3d(pxToBlocks(5.5f), 0.40625, 0);
+            case RagdollSlots.Humanoid.RIGHT_ARM -> new Vector3d(pxToBlocks(-5.5f), 0.40625, 0);
+            case RagdollSlots.Humanoid.LEFT_LEG -> new Vector3d(pxToBlocks(2), pxToBlocks(18), 0);
+            case RagdollSlots.Humanoid.RIGHT_LEG -> new Vector3d(pxToBlocks(-2), pxToBlocks(18), 0);
+            default -> new Vector3d();
         };
     }
 }

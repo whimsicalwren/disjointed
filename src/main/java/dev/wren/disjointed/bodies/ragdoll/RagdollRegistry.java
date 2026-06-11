@@ -1,8 +1,10 @@
 package dev.wren.disjointed.bodies.ragdoll;
 
 import dev.wren.disjointed.bodies.ragdoll.client.ClientRagdollRenderer;
+import dev.wren.disjointed.bodies.ragdoll.client.renderer.EnderDragonRagdollRenderer;
 import dev.wren.disjointed.bodies.ragdoll.client.renderer.PlayerRagdollRenderer;
 import dev.wren.disjointed.bodies.ragdoll.client.renderer.SlimPlayerRagdollRenderer;
+import dev.wren.disjointed.bodies.ragdoll.types.EnderDragonRagdoll;
 import dev.wren.disjointed.bodies.ragdoll.types.PlayerRagdoll;
 import dev.wren.disjointed.bodies.ragdoll.types.SlimPlayerRagdoll;
 import dev.wren.disjointed.util.Utils;
@@ -56,7 +58,7 @@ public class RagdollRegistry {
             UUID uuid = tag.getUUID("uuid");
             String username = tag.getString("username");
 
-            HashMap<String, Long> ids = Utils.readMap(tag.getCompound("pieces"), RagdollSlots.Player.allSlots(), CompoundTag::getLong);
+            HashMap<String, Long> ids = Utils.readMap(tag.getCompound("pieces"), RagdollSlots.Humanoid.allSlots(), CompoundTag::getLong);
 
             return new PlayerRagdoll(uuid, username, ids);
         }, ((level, pos, args, isStatic) -> PlayerRagdoll.create(level, pos, args.get(0), isStatic)));
@@ -65,10 +67,17 @@ public class RagdollRegistry {
             UUID uuid = tag.getUUID("uuid");
             String username = tag.getString("username");
 
-            HashMap<String, Long> ids = Utils.readMap(tag.getCompound("pieces"), RagdollSlots.Player.allSlots(), CompoundTag::getLong);
+            HashMap<String, Long> ids = Utils.readMap(tag.getCompound("pieces"), RagdollSlots.Humanoid.allSlots(), CompoundTag::getLong);
 
             return new SlimPlayerRagdoll(uuid, username, ids);
         }, ((level, pos, args, isStatic) -> SlimPlayerRagdoll.create(level, pos, args.get(0), isStatic)));
+
+        register("ender_dragon", new EnderDragonRagdollRenderer(), tag -> {
+            UUID uuid = tag.getUUID("uuid");
+            HashMap<String, Long> ids = Utils.readMap(tag.getCompound("pieces"), RagdollSlots.Humanoid.allSlots(), CompoundTag::getLong);
+
+            return new EnderDragonRagdoll(uuid, ids);
+        }, ((level, pos, args, isStatic) -> EnderDragonRagdoll.create(level, pos, isStatic)));
     }
 
     public record RagdollSpec(ClientRagdollRenderer renderer, Function<CompoundTag, Ragdoll> deserializer, RagdollFactory factory) {}

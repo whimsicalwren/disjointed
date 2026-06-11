@@ -1,5 +1,6 @@
 package dev.wren.disjointed;
 
+import dev.wren.disjointed.bodies.linked.PhysTickHandler;
 import dev.wren.disjointed.bodies.ragdoll.RagdollManager;
 import dev.wren.disjointed.bodies.ragdoll.RagdollRegistry;
 import dev.wren.disjointed.util.commands.DisjointedCommands;
@@ -14,6 +15,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.valkyrienskies.mod.common.ValkyrienSkiesMod;
 
 @Mod(Disjointed.MODID)
 public class Disjointed {
@@ -31,7 +33,7 @@ public class Disjointed {
         MinecraftForge.EVENT_BUS.addListener(DisjointedCommands::register);
         MinecraftForge.EVENT_BUS.addListener(Disjointed::onPlayerJoin);
         MinecraftForge.EVENT_BUS.addListener(Disjointed::onServerStart);
-        //ValkyrienSkiesMod.getApi().getPhysTickEvent().on(PhysTickHandler::onPhysTick);
+        ValkyrienSkiesMod.getApi().getPhysTickEvent().on(PhysTickHandler::onPhysTick);
 
         LOGGER.info("{} ({}) initialized!", NAME, MODID);
     }

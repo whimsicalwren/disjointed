@@ -2,12 +2,9 @@ package dev.wren.disjointed.util;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.mojang.authlib.Agent;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
-import com.mojang.authlib.yggdrasil.response.ProfileSearchResultsResponse;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -31,20 +28,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class Utils {
 
     public static Vector3d fromVec3(Vec3 vec3) {
         return new Vector3d(vec3.x, vec3.y, vec3.z);
-    }
-
-    public static Vector3d all(double d) {
-        return new Vector3d(d, d, d);
     }
 
     public static Vector3d getActualPosition(Entity entity) {
@@ -96,6 +86,10 @@ public class Utils {
 
     public static float pxToBlocks(float pixels) {
         return pixels / 16f;
+    }
+
+    public static double pxToBlocks(double pixels) {
+        return pixels / 16;
     }
 
     public static void getSkin(String username, Consumer<ResourceLocation> callback) {

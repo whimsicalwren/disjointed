@@ -17,7 +17,8 @@ import org.valkyrienskies.core.impl.bodies.properties.BodyTransformImpl;
 import org.valkyrienskies.core.impl.game.bodies.BodyInertiaDataImpl;
 import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
-import static dev.wren.disjointed.util.Utils.*;
+import static dev.wren.disjointed.util.Utils.getActualPosition;
+
 
 public class LinkedBodyHelper {
 
@@ -29,7 +30,7 @@ public class LinkedBodyHelper {
             VsBodyCreateData bodyCreateData = new VsBodyCreateData(
                     VSGameUtilsKt.getDimensionId(level),
                     new BodyInertiaDataImpl(shapeData.getAabb().center(new Vector3d(posMid)), 1000, new Matrix3d()),
-                    new BodyKinematicsImpl(all(0), all(0), new BodyTransformImpl(posMid, new Quaterniond(), all(1), all(0))),
+                    new BodyKinematicsImpl(new Vector3d(), new Vector3d(), new BodyTransformImpl(posMid, new Quaterniond(), new Vector3d(1), new Vector3d())),
                     shapeData,
                     false,
                     VsBodyDefaults.DEFAULT_COLLISION_MASK,

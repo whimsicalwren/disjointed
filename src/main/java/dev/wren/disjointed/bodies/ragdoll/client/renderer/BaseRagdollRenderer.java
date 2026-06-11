@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.wren.disjointed.bodies.ragdoll.client.ClientRagdoll;
 import dev.wren.disjointed.bodies.ragdoll.client.ClientRagdollRenderer;
+import dev.wren.disjointed.bodies.ragdoll.client.ModelPartExtension;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -42,20 +43,20 @@ public abstract class BaseRagdollRenderer<M extends EntityModel<?>> implements C
 
             poseStack.mulPose(rt.getRotation().get(new Quaternionf()));
             Vector3d offset = getOffsetVector(slot);
-            poseStack.translate(offset.x, offset.y, offset.z);
+            if (offset != null) poseStack.translate(offset.x, offset.y, offset.z);
 
             poseStack.scale(-1f, -1f, 1f);
 
             VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityTranslucent(texture));
 
-            ModelPart part = getModelPartForSlot(slot, model);
+            ModelPartExtension part = (ModelPartExtension) getModelPartForSlot(slot, model);
             if (part != null) {
-                part.render(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+                part.renderWithoutChildren(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
             }
 
-            ModelPart layerPart = getModelLayerPartForSlot(slot, model);
+            ModelPartExtension layerPart = (ModelPartExtension) getModelLayerPartForSlot(slot, model);
             if (layerPart != null) {
-                layerPart.render(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+                layerPart.renderWithoutChildren(poseStack, consumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
             }
 
             poseStack.popPose();

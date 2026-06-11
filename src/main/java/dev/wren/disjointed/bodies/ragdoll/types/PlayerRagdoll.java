@@ -18,7 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static dev.wren.disjointed.bodies.ragdoll.RagdollUtils.*;
+import static dev.wren.disjointed.bodies.ragdoll.RagdollShapes.Humanoid.*;
+import static dev.wren.disjointed.bodies.ragdoll.RagdollUtils.createRagdollJoint;
+import static dev.wren.disjointed.bodies.ragdoll.RagdollUtils.createRagdollPieceData;
 import static dev.wren.disjointed.util.Utils.pxToBlocks;
 
 public class PlayerRagdoll implements Ragdoll {
@@ -50,7 +52,7 @@ public class PlayerRagdoll implements Ragdoll {
 
     @Override
     public List<String> getSlots() {
-        return RagdollSlots.Player.allSlots();
+        return RagdollSlots.Humanoid.allSlots();
     }
 
     @Override
@@ -69,22 +71,14 @@ public class PlayerRagdoll implements Ragdoll {
     }
 
     @Override
-    public void remove(ServerLevel level) {
-        for (Long id : this.pieces.values()) {
-            ServerVsBody body = (ServerVsBody) VSGameUtilsKt.getAllBodies(level).getById(id);
-            if (body != null) VSGameUtilsKt.getShipObjectWorld(level).deleteBody(body);
-        }
-    }
-
-    @Override
     public void createJoints(ServerLevel level) {
-        Long torso = getSlot(RagdollSlots.Player.TORSO);
+        Long torso = getSlot(RagdollSlots.Humanoid.TORSO);
 
-        VSSphericalJoint torsoToHead = createRagdollJoint(torso, getSlot(RagdollSlots.Player.HEAD), new Vector3d(0, pxToBlocks(6), 0), new Vector3d(0, pxToBlocks(-4), 0));
-        VSSphericalJoint torsoToLeftArm = createRagdollJoint(torso, getSlot(RagdollSlots.Player.LEFT_LEG), new Vector3d(pxToBlocks(4), pxToBlocks(6), 0), new Vector3d(pxToBlocks(-2), pxToBlocks(6), 0));
-        VSSphericalJoint torsoToRightArm = createRagdollJoint(torso, getSlot(RagdollSlots.Player.RIGHT_ARM), new Vector3d(pxToBlocks(-4), pxToBlocks(6), 0), new Vector3d(pxToBlocks(2), pxToBlocks(6), 0));
-        VSSphericalJoint torsoToLeftLeg = createRagdollJoint(torso, getSlot(RagdollSlots.Player.LEFT_LEG), new Vector3d(pxToBlocks(2), pxToBlocks(-6), 0), new Vector3d(0, pxToBlocks(6), 0));
-        VSSphericalJoint torsoToRightLeg = createRagdollJoint(torso, getSlot(RagdollSlots.Player.RIGHT_LEG), new Vector3d(pxToBlocks(-2), pxToBlocks(-6), 0), new Vector3d(0, pxToBlocks(6), 0));
+        VSSphericalJoint torsoToHead = createRagdollJoint(torso, getSlot(RagdollSlots.Humanoid.HEAD), new Vector3d(0, pxToBlocks(6), 0), new Vector3d(0, pxToBlocks(-4), 0));
+        VSSphericalJoint torsoToLeftArm = createRagdollJoint(torso, getSlot(RagdollSlots.Humanoid.LEFT_LEG), new Vector3d(pxToBlocks(4), pxToBlocks(6), 0), new Vector3d(pxToBlocks(-2), pxToBlocks(6), 0));
+        VSSphericalJoint torsoToRightArm = createRagdollJoint(torso, getSlot(RagdollSlots.Humanoid.RIGHT_ARM), new Vector3d(pxToBlocks(-4), pxToBlocks(6), 0), new Vector3d(pxToBlocks(2), pxToBlocks(6), 0));
+        VSSphericalJoint torsoToLeftLeg = createRagdollJoint(torso, getSlot(RagdollSlots.Humanoid.LEFT_LEG), new Vector3d(pxToBlocks(2), pxToBlocks(-6), 0), new Vector3d(0, pxToBlocks(6), 0));
+        VSSphericalJoint torsoToRightLeg = createRagdollJoint(torso, getSlot(RagdollSlots.Humanoid.RIGHT_LEG), new Vector3d(pxToBlocks(-2), pxToBlocks(-6), 0), new Vector3d(0, pxToBlocks(6), 0));
 
         GameToPhysicsAdapter gtpa = ValkyrienSkiesMod.getOrCreateGTPA(VSGameUtilsKt.getDimensionId(level));
 
@@ -97,13 +91,13 @@ public class PlayerRagdoll implements Ragdoll {
 
     @Override
     public void changeCollision(PhysLevel level) {
-        Long torso = getSlot(RagdollSlots.Player.TORSO);
-        Long leftLeg = getSlot(RagdollSlots.Player.LEFT_LEG);
-        Long rightLeg = getSlot(RagdollSlots.Player.RIGHT_LEG);
+        Long torso = getSlot(RagdollSlots.Humanoid.TORSO);
+        Long leftLeg = getSlot(RagdollSlots.Humanoid.LEFT_LEG);
+        Long rightLeg = getSlot(RagdollSlots.Humanoid.RIGHT_LEG);
 
-        level.disableCollisionBetween(torso, getSlot(RagdollSlots.Player.HEAD));
-        level.disableCollisionBetween(torso, getSlot(RagdollSlots.Player.LEFT_ARM));
-        level.disableCollisionBetween(torso, getSlot(RagdollSlots.Player.RIGHT_ARM));
+        level.disableCollisionBetween(torso, getSlot(RagdollSlots.Humanoid.HEAD));
+        level.disableCollisionBetween(torso, getSlot(RagdollSlots.Humanoid.LEFT_ARM));
+        level.disableCollisionBetween(torso, getSlot(RagdollSlots.Humanoid.RIGHT_ARM));
         level.disableCollisionBetween(torso, leftLeg);
         level.disableCollisionBetween(torso, rightLeg);
         level.disableCollisionBetween(rightLeg, leftLeg);
@@ -118,14 +112,14 @@ public class PlayerRagdoll implements Ragdoll {
         PlayerRagdoll ragdoll = new PlayerRagdoll(username);
         VsiServerShipWorld shipWorld = VSGameUtilsKt.getShipObjectWorld(level);
 
-        ragdoll.addSlot(RagdollSlots.Player.HEAD, shipWorld.createBody(createRagdollPieceData(level, headShape(), new Vector3d(pos).add(0, pxToBlocks(10), 0), 1000, isStatic)));
-        ragdoll.addSlot(RagdollSlots.Player.TORSO, shipWorld.createBody(createRagdollPieceData(level, torsoShape(), new Vector3d(pos), 1000, isStatic)));
+        ragdoll.addSlot(RagdollSlots.Humanoid.HEAD, shipWorld.createBody(createRagdollPieceData(level, head(), new Vector3d(pos).add(0, pxToBlocks(10), 0), 1000, isStatic)));
+        ragdoll.addSlot(RagdollSlots.Humanoid.TORSO, shipWorld.createBody(createRagdollPieceData(level, torso(), new Vector3d(pos), 1000, isStatic)));
 
-        ragdoll.addSlot(RagdollSlots.Player.LEFT_ARM, shipWorld.createBody(createRagdollPieceData(level, armOrLegShape(), new Vector3d(pos).add(pxToBlocks(6), 0, 0), 1000, isStatic)));
-        ragdoll.addSlot(RagdollSlots.Player.RIGHT_ARM, shipWorld.createBody(createRagdollPieceData(level, armOrLegShape(), new Vector3d(pos).add(pxToBlocks(-6), 0, 0), 1000, isStatic)));
+        ragdoll.addSlot(RagdollSlots.Humanoid.LEFT_ARM, shipWorld.createBody(createRagdollPieceData(level, armOrLeg(), new Vector3d(pos).add(pxToBlocks(6), 0, 0), 1000, isStatic)));
+        ragdoll.addSlot(RagdollSlots.Humanoid.RIGHT_ARM, shipWorld.createBody(createRagdollPieceData(level, armOrLeg(), new Vector3d(pos).add(pxToBlocks(-6), 0, 0), 1000, isStatic)));
 
-        ragdoll.addSlot(RagdollSlots.Player.LEFT_LEG, shipWorld.createBody(createRagdollPieceData(level, armOrLegShape(), new Vector3d(pos).add(pxToBlocks(2), pxToBlocks(-12), 0), 1000, isStatic)));
-        ragdoll.addSlot(RagdollSlots.Player.RIGHT_LEG, shipWorld.createBody(createRagdollPieceData(level, armOrLegShape(), new Vector3d(pos).add(pxToBlocks(-2), pxToBlocks(-12), 0), 1000, isStatic)));
+        ragdoll.addSlot(RagdollSlots.Humanoid.LEFT_LEG, shipWorld.createBody(createRagdollPieceData(level, armOrLeg(), new Vector3d(pos).add(pxToBlocks(2), pxToBlocks(-12), 0), 1000, isStatic)));
+        ragdoll.addSlot(RagdollSlots.Humanoid.RIGHT_LEG, shipWorld.createBody(createRagdollPieceData(level, armOrLeg(), new Vector3d(pos).add(pxToBlocks(-2), pxToBlocks(-12), 0), 1000, isStatic)));
 
         return ragdoll;
     }

@@ -5,6 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import org.valkyrienskies.core.api.bodies.ServerVsBody;
 import org.valkyrienskies.core.api.world.PhysLevel;
+import org.valkyrienskies.mod.common.VSGameUtilsKt;
 
 import java.util.List;
 import java.util.Map;
@@ -21,9 +22,15 @@ public interface Ragdoll {
 
     Long getSlot(String slot);
 
-    void remove(ServerLevel level);
     void createJoints(ServerLevel level);
     void changeCollision(PhysLevel level);
+
+    default void remove(ServerLevel level) {
+        for (Long id : getPieces().values()) {
+            ServerVsBody body = (ServerVsBody) VSGameUtilsKt.getAllBodies(level).getById(id);
+            if (body != null) VSGameUtilsKt.getShipObjectWorld(level).deleteBody(body);
+        }
+    }
 
 
     default ServerVsBody addSlot(String slot, ServerVsBody body) {
